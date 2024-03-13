@@ -1,0 +1,4 @@
+.env
+*.pyc
+autolike.py
+manage.py
