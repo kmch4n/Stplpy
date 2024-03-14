@@ -20,6 +20,9 @@ class StudyPlus:
     def get_user(self, user_name: str) -> json:
         return self.user.get_user(user_name)
 
+    def update_profile_picture(self, file_path: str) -> bool:
+        return self.user.update_profile_picture(file_path)
+
     def follow_user(self, user_name: str) -> bool:
         return self.user.follow_user(user_name)
 
