@@ -44,9 +44,5 @@ cl.like_post(
     cl.get_achievement_timeline(target_id=todai)["feeds"][0]["body_study_achievement"]["event_id"]
 )
 
-toshin_profile_pic_url = toshin["user_image_url"]
-file_name = 'toshin_profile_pic.jpg'
-data = requests.get(toshin_profile_pic_url).content
-with open(file_name, mode='wb') as f:
-    f.write(data) # 東進のプロフィールurlをダウンロード
-cl.update_profile_picture(file_path=file_name) # アイコンを指定した画像ファイルに変更
+cl.download_profile_picture(user_name=toshin["username"], output_file_name="toshin.jpg")  # アイコンを名前を指定して保存
+cl.update_profile_picture(file_path="toshin.jpg")  # アイコンを指定した画像ファイルに変更

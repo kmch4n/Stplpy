@@ -26,6 +26,18 @@ class User:
         else:
             raise ValueError(f"[{result.status_code}] failed to get_user :/")
 
+    def download_profile_picture(self, user_name: str = None, output_file_name: str = "profile.jpg") -> bool:
+        if user_name is None:
+            user_name = self.get_myself()["username"]
+        try:
+            profile_picture_url = self.get_user(user_name)["user_image_url"]
+            data = requests.get(profile_picture_url).content
+            with open(output_file_name, mode='wb') as f:
+                f.write(data)
+            return True
+        except Exception as e:
+            raise Exception(e)
+
     def update_profile_picture(self, file_path: str) -> bool:
         url = "https://api.studyplus.jp/2/settings/profile_icon"
         with open(file_path, 'rb') as file:
