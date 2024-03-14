@@ -32,7 +32,7 @@ class User:
             files = {
                 'image': ('image.jpg', file, 'image/jpeg')
             }
-        result = requests.put(url, headers=self.headers, files=files)
+            result = requests.post(url, headers=self.headers, files=files)
         if result.status_code == 204:
             return True
         else:
