@@ -26,6 +26,18 @@ class User:
         else:
             raise ValueError(f"[{result.status_code}] failed to get_user :/")
 
+    def update_profile_picture(self, file_path: str) -> bool:
+        url = "https://api.studyplus.jp/2/settings/profile_icon"
+        with open(file_path, 'rb') as file:
+            files = {
+                'image': ('image.jpg', file, 'image/jpeg')
+            }
+        result = requests.put(url, headers=self.headers, files=files)
+        if result.status_code == 204:
+            return True
+        else:
+            raise ValueError(f"[{result.status_code}] failed to update_profile_picture :/")
+
     def follow_user(self, user_name: str) -> bool:
         data = {"username": user_name}
         url = "https://api.studyplus.jp/2/follows"
