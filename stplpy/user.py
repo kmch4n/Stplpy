@@ -10,7 +10,7 @@ class User:
             "Authorization": f"OAuth {token}"
         }
 
-    def get_myself(self):
+    def get_myself(self) -> json:
         url = "https://api.studyplus.jp/2/me"
         result = requests.get(url, headers=self.headers)
         if result.status_code == 200:
@@ -77,7 +77,7 @@ class User:
         except Exception as e:
             raise Exception(e)
 
-    def get_followers(self, target_id: str, limit: int = 10, header_less: bool = False):
+    def get_followers(self, target_id: str, limit: int = 10, header_less: bool = False) -> list:
         count: int = 1
         results = []
         try:

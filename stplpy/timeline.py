@@ -13,7 +13,7 @@ class Timeline:
             "Authorization": f"OAuth {token}"
         }
 
-    def create_token(self, n: int = 10):
+    def create_token(self, n: int = 10) -> str:
         randlst = [
             random.choice(string.ascii_letters + string.digits) for i in range(n)
         ]
@@ -63,7 +63,7 @@ class Timeline:
         else:
             raise ValueError(f"[{result.status_code}] failed to post study record :/")
 
-    def delete_study_record(self, record_number: int):
+    def delete_study_record(self, record_number: int) -> json:
         url = f"https://api.studyplus.jp/2/study_records/{str(record_number)}"
         result = requests.delete(url, headers=self.headers)
         if result.status_code == 200:
@@ -112,7 +112,7 @@ class Timeline:
         else:
             raise ValueError(f"[{result.status_code}] failed to get achievement timeline :/")
 
-    def get_user_timelines(self, target_id: str, limit: int = 3) -> json:
+    def get_user_timelines(self, target_id: str, limit: int = 3) -> list:
         results = []
         until = None
         for _ in range(limit):
@@ -127,7 +127,7 @@ class Timeline:
             until = result["next"]
         return results
 
-    def get_goal_timelines(self, target_id: str, limit: int = 3) -> json:
+    def get_goal_timelines(self, target_id: str, limit: int = 3) -> list:
         results = []
         until = None
         for _ in range(limit):
@@ -142,7 +142,7 @@ class Timeline:
             until = result["next"]
         return results
 
-    def get_achievement_timelines(self, target_id: str, limit: int = 3) -> json:
+    def get_achievement_timelines(self, target_id: str, limit: int = 3) -> list:
         results = []
         until = None
         for _ in range(limit):
