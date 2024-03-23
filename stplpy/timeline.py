@@ -74,7 +74,7 @@ class Timeline:
         except HTTPError as http_err:
             raise Exception(f"[{result.status_code}] Failed to unsend comment on post : {http_err}") from http_err
 
-    def post_study_record(self, material_code: str = None, duration: int = 0, comment: str = "", record_datetime: str = None) -> bool:
+    def post_study_record(self, material_code: str = None, duration: int = 0, comment: str = "", record_datetime: str = None) -> json:
         if record_datetime is None:
             record_datetime = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
         data = {
@@ -90,11 +90,11 @@ class Timeline:
         try:
             result = requests.post(url, headers=self.headers, json=data)
             result.raise_for_status()
-            return True
+            return result.json()
         except HTTPError as http_err:
             raise Exception(f"[{result.status_code}] Failed to post study record : {http_err}") from http_err
 
-    def delete_study_record(self, record_number: int):
+    def delete_study_record(self, record_number: int) -> json:
         url = f"https://api.studyplus.jp/2/study_records/{str(record_number)}"
         try:
             result = requests.delete(url, headers=self.headers)
