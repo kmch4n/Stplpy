@@ -37,6 +37,9 @@ with open('data.json', 'w', encoding='utf-8') as f:
 cl.like_post(tl["feeds"][0]["body_study_record"]["event_id"])
 cl.unlike_post(tl["feeds"][0]["body_study_record"]["event_id"])
 
+comment = cl.send_comment(tl["feeds"][0]["body_study_record"]["event_id"], "👍️")
+cl.unsend_comment(tl["feeds"][0]["body_study_record"]["event_id"], comment['coment_id'])
+
 target_1900 = "ASIN4010339179"  # ターゲット1900 教材id
 duration = 60  # ここは秒数 10分の場合は600 1時間の場合は3600
 cl.post_study_record(material_code=target_1900, duration=duration, comment="朝活", record_datetime="2000-01-01T00:00:00Z")
