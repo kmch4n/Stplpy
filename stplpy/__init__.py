@@ -48,11 +48,11 @@ class StudyPlus:
     def unlike_post(self, post_id: str) -> bool:
         return self.timeline.unlike_post(post_id)
 
-    def comment(self, post_id: str, text: str) -> bool:
-        return self.timeline.comment(post_id, text)
+    def send_comment(self, post_id: str, text: str) -> bool:
+        return self.timeline.send_comment(post_id, text)
 
-    def delete_comment(self, post_id: str, comment_id: str) -> bool:
-        return self.timeline.delete_comment(post_id, comment_id)
+    def unsend_comment(self, post_id: str, comment_id: str) -> bool:
+        return self.timeline.unsend_comment(post_id, comment_id)
 
     def post_study_record(self, material_code: str = None, duration: int = 0, comment: str = "", record_datetime: str = None) -> bool:
         return self.timeline.post_study_record(material_code, duration, comment, record_datetime)
