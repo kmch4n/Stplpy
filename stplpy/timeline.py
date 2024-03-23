@@ -65,6 +65,15 @@ class Timeline:
         except HTTPError as http_err:
             raise Exception(f"[{result.status_code}] Failed to comment on post : {http_err}") from http_err
 
+    def delete_comment(self, post_id: str, comment_id: str) -> bool:
+        url = f"https://api.studyplus.jp/2/timeline_events/{post_id}/comments/{comment_id}"
+        try:
+            result = requests.delete(url, headers=self.headers)
+            result.raise_for_status()
+            return True
+        except HTTPError as http_err:
+            raise Exception(f"[{result.status_code}] Failed to delete comment : {http_err}") from http_err
+
     def post_study_record(self, material_code: str = None, duration: int = 0, comment: str = "", record_datetime: str = None) -> bool:
         if record_datetime is None:
             record_datetime = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
