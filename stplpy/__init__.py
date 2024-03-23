@@ -1,7 +1,8 @@
-from .timeline import Timeline
-from .user import User
 import datetime
 import json
+
+from .timeline import Timeline
+from .user import User
 
 
 class StudyPlus:

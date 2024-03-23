@@ -1,8 +1,9 @@
-from stplpy import StudyPlus
-from dotenv import load_dotenv
-import requests
 import json
 import os
+
+from dotenv import load_dotenv
+from stplpy import StudyPlus
+
 
 load_dotenv(".env")
 

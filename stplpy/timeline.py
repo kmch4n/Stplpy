@@ -7,7 +7,6 @@ import requests
 from requests.exceptions import HTTPError
 
 
-
 class Timeline:
     def __init__(self, token: str):
         self.token = token
