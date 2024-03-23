@@ -1,6 +1,7 @@
 from stplpy import StudyPlus
 from dotenv import load_dotenv
 import requests
+import json
 import os
 
 load_dotenv(".env")
@@ -28,6 +29,10 @@ cl.follow_user(user_name=toshin_user_id)
 cl.unfollow_user(user_name=toshin_user_id)
 
 tl = cl.get_user_timeline(toshin_user_id)
+post = cl.get_post_detail(tl["feeds"][0]["body_study_record"]["event_id"], include_like_users=True, include_comments=True)
+with open('data.json', 'w', encoding='utf-8') as f:
+    json.dump(post, f, indent=4, ensure_ascii=False)
+
 cl.like_post(tl["feeds"][0]["body_study_record"]["event_id"])
 cl.unlike_post(tl["feeds"][0]["body_study_record"]["event_id"])
 

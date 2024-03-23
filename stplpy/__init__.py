@@ -39,6 +39,8 @@ class StudyPlus:
         return self.user.get_followers(target_id, limit, header_less)
 
     # __________Timeline__________
+    def get_post_detail(self, post_id: str, include_like_users: bool = False, like_user_count: int = 100, include_comments: bool = False, comment_count: int = 100) -> json:
+        return self.timeline.get_post_detail(post_id, include_like_users, like_user_count, include_comments, comment_count)
     def like_post(self, post_id: str) -> bool:
         return self.timeline.like_post(post_id)
 

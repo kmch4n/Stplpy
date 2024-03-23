@@ -19,6 +19,21 @@ class Timeline:
         ]
         return "".join(randlst)
 
+    def get_post_detail(self, post_id: str, include_like_users: bool = False, like_user_count: int = 100, include_comments: bool = False, comment_count: int = 100) -> json:
+        url = f"https://api.studyplus.jp/2/timeline_events/{post_id}"
+        if include_like_users:
+            url += f"?include_like_users=t&like_user_count={str(like_user_count)}"
+        if include_comments:
+            if include_like_users:
+                url += f"&include_comments=t&comment_count={str(comment_count)}"
+            else:
+                url += f"?include_comments=t&comment_count={str(comment_count)}"
+        result = requests.get(url, headers=self.headers)
+        if result.status_code == 200:
+            return result.json()
+        else:
+            raise ValueError(f"[{result.status_code}] failed to get post detail :/")
+
     def like_post(self, post_id: str) -> bool:
         url = f"https://api.studyplus.jp/2/timeline_events/{post_id}/likes/like"
         result = requests.post(url, headers=self.headers)
