@@ -1,8 +1,11 @@
 from datetime import datetime
-import requests
+import json
 import random
 import string
-import json
+
+import requests
+from requests.exceptions import HTTPError
+
 
 
 class Timeline:
@@ -28,38 +31,42 @@ class Timeline:
                 url += f"&include_comments=t&comment_count={str(comment_count)}"
             else:
                 url += f"?include_comments=t&comment_count={str(comment_count)}"
-        result = requests.get(url, headers=self.headers)
-        if result.status_code == 200:
+        try:
+            result = requests.get(url, headers=self.headers)
+            result.raise_for_status()
             return result.json()
-        else:
-            raise ValueError(f"[{result.status_code}] failed to get post detail :/")
+        except HTTPError as http_err:
+            raise Exception(f"[{result.status_code}] Failed to get post detail : {http_err}") from http_err
 
     def like_post(self, post_id: str) -> bool:
         url = f"https://api.studyplus.jp/2/timeline_events/{post_id}/likes/like"
-        result = requests.post(url, headers=self.headers)
-        if result.status_code == 200:
+        try:
+            result = requests.post(url, headers=self.headers)
+            result.raise_for_status()
             return True
-        else:
-            raise ValueError(f"[{result.status_code}] failed to like post :/")
+        except HTTPError as http_err:
+            raise Exception(f"[{result.status_code}] Failed to like post : {http_err}") from http_err
 
     def unlike_post(self, post_id: str) -> bool:
         url = f"https://api.studyplus.jp/2/timeline_events/{post_id}/likes/withdraw"
-        result = requests.post(url, headers=self.headers)
-        if result.status_code == 200:
+        try:
+            result = requests.post(url, headers=self.headers)
+            result.raise_for_status()
             return True
-        else:
-            raise ValueError(f"[{result.status_code}] failed to unlike post :/")
+        except HTTPError as http_err:
+            raise Exception(f"[{result.status_code}] Failed to unlike post : {http_err}") from http_err
 
     def comment(self, post_id: str, text: str) -> bool:
         param = {"post_token": "NONE", "comment": text}
         url = f"https://api.studyplus.jp/2/timeline_events/{post_id}/comments"
-        result = requests.post(url, headers=self.headers, json=param)
-        if result.status_code == 200:
+        try:
+            result = requests.post(url, headers=self.headers, json=param)
+            result.raise_for_status()
             return True
-        else:
-            raise ValueError(f"[{result.status_code}] failed to comment :/")
+        except HTTPError as http_err:
+            raise Exception(f"[{result.status_code}] Failed to comment on post : {http_err}") from http_err
 
-    def post_study_record(self, material_code: str = None, duration: int = 0, comment: str = "", record_datetime: str = None,) -> bool:
+    def post_study_record(self, material_code: str = None, duration: int = 0, comment: str = "", record_datetime: str = None) -> bool:
         if record_datetime is None:
             record_datetime = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
         data = {
@@ -72,41 +79,33 @@ class Timeline:
         if material_code:
             data["material_code"] = material_code
         url = "https://api.studyplus.jp/2/study_records"
-        result = requests.post(url, headers=self.headers, json=data)
-        if result.status_code == 200:
+        try:
+            result = requests.post(url, headers=self.headers, json=data)
+            result.raise_for_status()
             return True
-        else:
-            raise ValueError(f"[{result.status_code}] failed to post study record :/")
+        except HTTPError as http_err:
+            raise Exception(f"[{result.status_code}] Failed to post study record : {http_err}") from http_err
 
-    def delete_study_record(self, record_number: int) -> json:
+    def delete_study_record(self, record_number: int):
         url = f"https://api.studyplus.jp/2/study_records/{str(record_number)}"
-        result = requests.delete(url, headers=self.headers)
-        if result.status_code == 200:
+        try:
+            result = requests.delete(url, headers=self.headers)
+            result.raise_for_status()
             return result.json()
-        else:
-            raise ValueError(f"[{result.status_code}] failed to delete study record :/")
+        except HTTPError as http_err:
+            raise Exception(f"[{result.status_code}] Failed to delete study record : {http_err}") from http_err
 
-    def get_user_timeline(self, target_id: str, until: str = None) -> json:
+    def get_user_timeline(self, target_id: str, until: str = None):
         if until is not None:
             url = f"https://api.studyplus.jp/2/timeline_feeds/user/{target_id}?until={until}"
         else:
             url = f"https://api.studyplus.jp/2/timeline_feeds/user/{target_id}"
-        result = requests.get(url, headers=self.headers)
-        if result.status_code == 200:
+        try:
+            result = requests.get(url, headers=self.headers)
+            result.raise_for_status()
             return result.json()
-        else:
-            raise ValueError(f"[{result.status_code}] failed to get user timeline :/")
-
-    def get_goal_timeline(self, target_id: str, until: str = None) -> json:
-        if until is not None:
-            url = f"https://api.studyplus.jp/2/timeline_feeds/study_goal/{target_id}?until={until}"
-        else:
-            url = f"https://api.studyplus.jp/2/timeline_feeds/study_goal/{target_id}"
-        result = requests.get(url, headers=self.headers)
-        if result.status_code == 200:
-            return result.json()
-        else:
-            raise ValueError(f"[{result.status_code}] failed to get goal timeline :/")
+        except HTTPError as http_err:
+            raise Exception(f"[{result.status_code}] Failed to get user timeline : {http_err}") from http_err
 
     def get_achievement_timeline(self, target_goal: str = None, until: str = None) -> json:
         if target_goal is None:
@@ -121,11 +120,12 @@ class Timeline:
             else:
                 url = f"https://api.studyplus.jp/2/study_achievements/feeds/study_goal/{
                     target_goal}"
-        result = requests.get(url, headers=self.headers)
-        if result.status_code == 200:
+        try:
+            result = requests.get(url, headers=self.headers)
+            result.raise_for_status()
             return result.json()
-        else:
-            raise ValueError(f"[{result.status_code}] failed to get achievement timeline :/")
+        except HTTPError as http_err:
+            raise Exception(f"[{result.status_code}] Failed to get achievement timeline : {http_err}") from http_err
 
     def get_user_timelines(self, target_id: str, limit: int = 3) -> list:
         results = []
