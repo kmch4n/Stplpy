@@ -29,16 +29,21 @@ follower : {toshin["follower_count"]}
 cl.follow_user(user_name=toshin_user_id)
 cl.unfollow_user(user_name=toshin_user_id)
 
-tl = cl.get_user_timeline(toshin_user_id)
-post = cl.get_post_detail(tl["feeds"][0]["body_study_record"]["event_id"], include_like_users=True, include_comments=True)
+my_tl = cl.get_followee_timeline()
+for n in range(10):
+    if my_tl["feeds"][n]["feed_type"] == "study_record":
+        cl.like_post(my_tl["feeds"][n]['body_study_record']['event_id'])
+
+user_tl = cl.get_user_timeline(toshin_user_id)
+post = cl.get_post_detail(user_tl["feeds"][0]["body_study_record"]["event_id"], include_like_users=True, include_comments=True)
 with open('data.json', 'w', encoding='utf-8') as f:
     json.dump(post, f, indent=4, ensure_ascii=False)
 
-cl.like_post(tl["feeds"][0]["body_study_record"]["event_id"])
-cl.unlike_post(tl["feeds"][0]["body_study_record"]["event_id"])
+cl.like_post(user_tl["feeds"][0]["body_study_record"]["event_id"])
+cl.unlike_post(user_tl["feeds"][0]["body_study_record"]["event_id"])
 
-comment = cl.send_comment(tl["feeds"][0]["body_study_record"]["event_id"], "👍️")
-cl.unsend_comment(tl["feeds"][0]["body_study_record"]["event_id"], comment['coment_id'])
+comment = cl.send_comment(user_tl["feeds"][0]["body_study_record"]["event_id"], "👍️")
+cl.unsend_comment(user_tl["feeds"][0]["body_study_record"]["event_id"], comment['coment_id'])
 
 target_1900 = "ASIN4010339179"  # ターゲット1900 教材id
 duration = 60  # ここは秒数 10分の場合は600 1時間の場合は3600

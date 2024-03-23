@@ -60,6 +60,9 @@ class StudyPlus:
     def delete_study_record(self, record_number: int) -> bool:
         return self.timeline.delete_study_record(record_number)
 
+    def get_followee_timeline(self, until: str = None) -> json:
+        return self.timeline.get_followee_timeline(until)
+
     def get_user_timeline(self, target_id: str, until: str = None) -> json:
         return self.timeline.get_user_timeline(target_id, until)
 
@@ -68,6 +71,9 @@ class StudyPlus:
 
     def get_achievement_timeline(self, target_id: str, until: str = None) -> json:
         return self.timeline.get_achievement_timeline(target_id, until)
+
+    def get_followee_timelines(self,limit: int = 3) -> list:
+        return self.timeline.get_followee_timelines(limit)
 
     def get_user_timelines(self, target_id: str, limit: int = 3) -> list:
         return self.timeline.get_user_timelines(target_id, limit)

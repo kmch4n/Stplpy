@@ -103,6 +103,18 @@ class Timeline:
         except HTTPError as http_err:
             raise Exception(f"[{result.status_code}] Failed to delete study record : {http_err}") from http_err
 
+    def get_followee_timeline(self, until: str = None) -> json:
+        if until is not None:
+            url = f"https://api.studyplus.jp/2/timeline_feeds/followee?until={until}"
+        else:
+            url = f"https://api.studyplus.jp/2/timeline_feeds/followee"
+        try:
+            result = requests.get(url, headers=self.headers)
+            result.raise_for_status()
+            return result.json()
+        except HTTPError as http_err:
+            raise Exception(f"[{result.status_code}] Failed to get followee timeline : {http_err}") from http_err
+
     def get_user_timeline(self, target_id: str, until: str = None):
         if until is not None:
             url = f"https://api.studyplus.jp/2/timeline_feeds/user/{target_id}?until={until}"
@@ -134,6 +146,21 @@ class Timeline:
             return result.json()
         except HTTPError as http_err:
             raise Exception(f"[{result.status_code}] Failed to get achievement timeline : {http_err}") from http_err
+
+    def get_followee_timelines(self, limit: int = 3) -> list:
+        results = []
+        until = None
+        for _ in range(limit):
+            if until is not None:
+                result = self.get_user_timeline(until)
+            else:
+                result = self.get_user_timeline()
+            for event in result["feeds"]:
+                results.append(event)
+            if "next" not in result:
+                break
+            until = result["next"]
+        return results
 
     def get_user_timelines(self, target_id: str, limit: int = 3) -> list:
         results = []
