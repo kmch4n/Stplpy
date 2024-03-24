@@ -10,7 +10,7 @@ class User:
             "Authorization": f"OAuth {token}"
         }
 
-    def get_myself(self) -> json:
+    def get_myself(self):
         url = "https://api.studyplus.jp/2/me"
         result = requests.get(url, headers=self.headers)
         if result.status_code == 200:
@@ -18,7 +18,7 @@ class User:
         else:
             raise ValueError(f"[{result.status_code}] failed to get_myself :/")
 
-    def get_user(self, user_name: str) -> json:
+    def get_user(self, user_name):
         url = f"https://api.studyplus.jp/2/users/{user_name}"
         result = requests.get(url, headers=self.headers)
         if result.status_code == 200:
@@ -26,7 +26,7 @@ class User:
         else:
             raise ValueError(f"[{result.status_code}] failed to get_user :/")
 
-    def download_profile_picture(self, user_name: str = None, output_file_name: str = "profile.jpg") -> bool:
+    def download_profile_picture(self, user_name, output_file_name):
         if user_name is None:
             user_name = self.get_myself()["username"]
         try:
@@ -38,7 +38,7 @@ class User:
         except Exception as e:
             raise Exception(e)
 
-    def update_profile_picture(self, file_path: str) -> bool:
+    def update_profile_picture(self, file_path):
         url = "https://api.studyplus.jp/2/settings/profile_icon"
         with open(file_path, 'rb') as file:
             files = {
@@ -50,7 +50,7 @@ class User:
         else:
             raise ValueError(f"[{result.status_code}] failed to update_profile_picture :/")
 
-    def follow_user(self, user_name: str) -> bool:
+    def follow_user(self, user_name):
         data = {"username": user_name}
         url = "https://api.studyplus.jp/2/follows"
         result = requests.post(url, headers=self.headers, json=data)
@@ -60,7 +60,7 @@ class User:
             raise ValueError(
                 f"[{result.status_code}] failed to follow user :/")
 
-    def unfollow_user(self, user_name: str) -> bool:
+    def unfollow_user(self, user_name):
         relationship_id = self.get_user(user_name)["user_relationship_id"]
         url = f"https://api.studyplus.jp/2/follows/{str(relationship_id)}"
         result = requests.delete(url, headers=self.headers)
@@ -70,8 +70,7 @@ class User:
             raise ValueError(
                 f"[{result.status_code}] failed to unfollow user :/")
 
-    def get_followees(self, target_id: str, limit: int = 10, header_less: bool = False) -> list:
-        count: int = 1
+    def get_followees(self, target_id, limit, header_less):
         results = []
         try:
             for _ in range(limit):
@@ -89,7 +88,7 @@ class User:
         except Exception as e:
             raise Exception(e)
 
-    def get_followers(self, target_id: str, limit: int = 10, header_less: bool = False) -> list:
+    def get_followers(self, target_id, limit, header_less):
         count: int = 1
         results = []
         try:

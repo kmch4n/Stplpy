@@ -21,7 +21,7 @@ class Timeline:
         ]
         return "".join(randlst)
 
-    def get_post_detail(self, post_id: str, include_like_users: bool = False, like_user_count: int = 100, include_comments: bool = False, comment_count: int = 100) -> json:
+    def get_post_detail(self, post_id, include_like_users, like_user_count, include_comments, comment_count):
         url = f"https://api.studyplus.jp/2/timeline_events/{post_id}"
         if include_like_users:
             url += f"?include_like_users=t&like_user_count={str(like_user_count)}"
@@ -37,7 +37,7 @@ class Timeline:
         except HTTPError as http_err:
             raise Exception(f"[{result.status_code}] Failed to get post detail : {http_err}") from http_err
 
-    def like_post(self, post_id: str) -> bool:
+    def like_post(self, post_id):
         url = f"https://api.studyplus.jp/2/timeline_events/{post_id}/likes/like"
         try:
             result = requests.post(url, headers=self.headers)
@@ -46,7 +46,7 @@ class Timeline:
         except HTTPError as http_err:
             raise Exception(f"[{result.status_code}] Failed to like post : {http_err}") from http_err
 
-    def unlike_post(self, post_id: str) -> bool:
+    def unlike_post(self, post_id):
         url = f"https://api.studyplus.jp/2/timeline_events/{post_id}/likes/withdraw"
         try:
             result = requests.post(url, headers=self.headers)
@@ -55,7 +55,7 @@ class Timeline:
         except HTTPError as http_err:
             raise Exception(f"[{result.status_code}] Failed to unlike post : {http_err}") from http_err
 
-    def send_comment(self, post_id: str, text: str) -> bool:
+    def send_comment(self, post_id, text):
         param = {"post_token": self.create_token(36), "comment": text}
         url = f"https://api.studyplus.jp/2/timeline_events/{post_id}/comments"
         try:
@@ -65,7 +65,7 @@ class Timeline:
         except HTTPError as http_err:
             raise Exception(f"[{result.status_code}] Failed to send comment on post : {http_err}") from http_err
 
-    def unsend_comment(self, post_id: str, comment_id: str) -> bool:
+    def unsend_comment(self, post_id, comment_id):
         url = f"https://api.studyplus.jp/2/timeline_events/{post_id}/comments/{comment_id}"
         try:
             result = requests.delete(url, headers=self.headers)
@@ -74,7 +74,7 @@ class Timeline:
         except HTTPError as http_err:
             raise Exception(f"[{result.status_code}] Failed to unsend comment on post : {http_err}") from http_err
 
-    def post_study_record(self, material_code: str = None, duration: int = 0, comment: str = "", record_datetime: str = None) -> json:
+    def post_study_record(self, material_code, duration, comment, record_datetime) -> json:
         if record_datetime is None:
             record_datetime = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
         data = {
@@ -94,7 +94,7 @@ class Timeline:
         except HTTPError as http_err:
             raise Exception(f"[{result.status_code}] Failed to post study record : {http_err}") from http_err
 
-    def delete_study_record(self, record_number: int) -> json:
+    def delete_study_record(self, record_number):
         url = f"https://api.studyplus.jp/2/study_records/{str(record_number)}"
         try:
             result = requests.delete(url, headers=self.headers)
@@ -103,7 +103,7 @@ class Timeline:
         except HTTPError as http_err:
             raise Exception(f"[{result.status_code}] Failed to delete study record : {http_err}") from http_err
 
-    def get_followee_timeline(self, until: str = None) -> json:
+    def get_followee_timeline(self, until):
         if until is not None:
             url = f"https://api.studyplus.jp/2/timeline_feeds/followee?until={until}"
         else:
@@ -115,7 +115,7 @@ class Timeline:
         except HTTPError as http_err:
             raise Exception(f"[{result.status_code}] Failed to get followee timeline : {http_err}") from http_err
 
-    def get_user_timeline(self, target_id: str, until: str = None):
+    def get_user_timeline(self, target_id, until):
         if until is not None:
             url = f"https://api.studyplus.jp/2/timeline_feeds/user/{target_id}?until={until}"
         else:
@@ -127,7 +127,19 @@ class Timeline:
         except HTTPError as http_err:
             raise Exception(f"[{result.status_code}] Failed to get user timeline : {http_err}") from http_err
 
-    def get_achievement_timeline(self, target_goal: str = None, until: str = None) -> json:
+    def get_goal_timeline(self, target_id, until):
+        if until is not None:
+            url = f"https://api.studyplus.jp/2/timeline_feeds/study_goal/{target_id}?until={until}"
+        else:
+            url = f"https://api.studyplus.jp/2/timeline_feeds/study_goal/{target_id}"
+        try:
+            result = requests.get(url, headers=self.headers)
+            result.raise_for_status()
+            return result.json()
+        except HTTPError as http_err:
+            raise Exception(f"[{result.status_code}] Failed to get goal timeline : {http_err}") from http_err
+
+    def get_achievement_timeline(self, target_goal, until):
         if target_goal is None:
             if until is not None:
                 url = f"https://api.studyplus.jp/2/study_achievements/feeds?until={until}"
@@ -147,7 +159,7 @@ class Timeline:
         except HTTPError as http_err:
             raise Exception(f"[{result.status_code}] Failed to get achievement timeline : {http_err}") from http_err
 
-    def get_followee_timelines(self, limit: int = 3) -> list:
+    def get_followee_timelines(self, limit):
         results = []
         until = None
         for _ in range(limit):
@@ -162,7 +174,7 @@ class Timeline:
             until = result["next"]
         return results
 
-    def get_user_timelines(self, target_id: str, limit: int = 3) -> list:
+    def get_user_timelines(self, target_id, limit):
         results = []
         until = None
         for _ in range(limit):
@@ -177,7 +189,7 @@ class Timeline:
             until = result["next"]
         return results
 
-    def get_goal_timelines(self, target_id: str, limit: int = 3) -> list:
+    def get_goal_timelines(self, target_id, limit):
         results = []
         until = None
         for _ in range(limit):
@@ -192,7 +204,7 @@ class Timeline:
             until = result["next"]
         return results
 
-    def get_achievement_timelines(self, target_id: str, limit: int = 3) -> list:
+    def get_achievement_timelines(self, target_id, limit):
         results = []
         until = None
         for _ in range(limit):

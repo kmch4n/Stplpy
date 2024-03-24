@@ -42,13 +42,14 @@ class StudyPlus:
     # __________Timeline__________
     def get_post_detail(self, post_id: str, include_like_users: bool = False, like_user_count: int = 100, include_comments: bool = False, comment_count: int = 100) -> json:
         return self.timeline.get_post_detail(post_id, include_like_users, like_user_count, include_comments, comment_count)
+
     def like_post(self, post_id: str) -> bool:
         return self.timeline.like_post(post_id)
 
     def unlike_post(self, post_id: str) -> bool:
         return self.timeline.unlike_post(post_id)
 
-    def send_comment(self, post_id: str, text: str) -> bool:
+    def send_comment(self, post_id: str, text: str) -> json:
         return self.timeline.send_comment(post_id, text)
 
     def unsend_comment(self, post_id: str, comment_id: str) -> bool:
@@ -57,7 +58,7 @@ class StudyPlus:
     def post_study_record(self, material_code: str = None, duration: int = 0, comment: str = "", record_datetime: str = None) -> bool:
         return self.timeline.post_study_record(material_code, duration, comment, record_datetime)
 
-    def delete_study_record(self, record_number: int) -> bool:
+    def delete_study_record(self, record_number: int) -> json:
         return self.timeline.delete_study_record(record_number)
 
     def get_followee_timeline(self, until: str = None) -> json:
@@ -72,7 +73,7 @@ class StudyPlus:
     def get_achievement_timeline(self, target_id: str, until: str = None) -> json:
         return self.timeline.get_achievement_timeline(target_id, until)
 
-    def get_followee_timelines(self,limit: int = 3) -> list:
+    def get_followee_timelines(self, limit: int = 3) -> list:
         return self.timeline.get_followee_timelines(limit)
 
     def get_user_timelines(self, target_id: str, limit: int = 3) -> list:
