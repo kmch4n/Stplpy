@@ -11,6 +11,10 @@ StplpyはStudyPlusをPythonで操作するためのライブラリです。
 
 ``pip install -r requirements.txt``
 
+### 実行環境
+このプロジェクトはPython 3.12で動作することを前提としています。
+お使いの環境にPython 3.12がインストールされていない場合は、適切なバージョンのPythonをインストールしてから実行してください。
+
 ### tokenの取得
 Charles等を使用してStudyPlusを開いた状態で適当に動かすと、Request HeaderのAuthorizationから見つけられます。
 ``OAuth xxxxxxxx``の``xxxxxx``部分のみを抽出してください。
