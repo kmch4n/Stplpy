@@ -103,7 +103,7 @@ class Timeline:
         except HTTPError as http_err:
             raise Exception(f"[{result.status_code}] Failed to delete study record : {http_err}") from http_err
 
-    def get_followee_timeline(self, until):
+    def get_followee_timeline(self, until=None):
         if until is not None:
             url = f"https://api.studyplus.jp/2/timeline_feeds/followee?until={until}"
         else:
@@ -115,7 +115,7 @@ class Timeline:
         except HTTPError as http_err:
             raise Exception(f"[{result.status_code}] Failed to get followee timeline : {http_err}") from http_err
 
-    def get_user_timeline(self, target_id, until):
+    def get_user_timeline(self, target_id, until=None):
         if until is not None:
             url = f"https://api.studyplus.jp/2/timeline_feeds/user/{target_id}?until={until}"
         else:
@@ -127,7 +127,7 @@ class Timeline:
         except HTTPError as http_err:
             raise Exception(f"[{result.status_code}] Failed to get user timeline : {http_err}") from http_err
 
-    def get_goal_timeline(self, target_id, until):
+    def get_goal_timeline(self, target_id, until=None):
         if until is not None:
             url = f"https://api.studyplus.jp/2/timeline_feeds/study_goal/{target_id}?until={until}"
         else:
@@ -139,7 +139,7 @@ class Timeline:
         except HTTPError as http_err:
             raise Exception(f"[{result.status_code}] Failed to get goal timeline : {http_err}") from http_err
 
-    def get_achievement_timeline(self, target_goal, until):
+    def get_achievement_timeline(self, target_goal, until=None):
         if target_goal is None:
             if until is not None:
                 url = f"https://api.studyplus.jp/2/study_achievements/feeds?until={until}"
