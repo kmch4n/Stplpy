@@ -71,6 +71,7 @@ class User:
                 f"[{result.status_code}] failed to unfollow user :/")
 
     def get_followees(self, target_id, limit, header_less):
+        count: int = 1
         results = []
         try:
             for _ in range(limit):
