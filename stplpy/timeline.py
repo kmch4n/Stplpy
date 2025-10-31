@@ -1,10 +1,17 @@
 from datetime import datetime
-import json
 import random
 import string
+from typing import Dict, List, Optional, Any
 
 import requests
 from requests.exceptions import HTTPError
+
+from .exceptions import (
+    APIError,
+    AuthenticationError,
+    ResourceNotFoundError,
+    RateLimitError
+)
 
 
 class Timeline:
@@ -15,13 +22,31 @@ class Timeline:
             "Authorization": f"OAuth {token}"
         }
 
+    def _handle_http_error(self, result, default_message: str, http_err: HTTPError):
+        """Handle HTTP errors and raise appropriate custom exceptions."""
+        if result.status_code == 404:
+            raise ResourceNotFoundError(f"Resource not found") from http_err
+        elif result.status_code in (401, 403):
+            raise AuthenticationError(f"[{result.status_code}] Authentication failed") from http_err
+        elif result.status_code == 429:
+            raise RateLimitError(f"Rate limit exceeded") from http_err
+        else:
+            raise APIError(f"[{result.status_code}] {default_message}", result.status_code) from http_err
+
     def create_token(self, n: int = 10) -> str:
         randlst = [
             random.choice(string.ascii_letters + string.digits) for i in range(n)
         ]
         return "".join(randlst)
 
-    def get_post_detail(self, post_id, include_like_users, like_user_count, include_comments, comment_count):
+    def get_post_detail(
+        self,
+        post_id: str,
+        include_like_users: bool = False,
+        like_user_count: int = 100,
+        include_comments: bool = False,
+        comment_count: int = 100
+    ) -> Dict[str, Any]:
         url = f"https://api.studyplus.jp/2/timeline_events/{post_id}"
         if include_like_users:
             url += f"?include_like_users=t&like_user_count={str(like_user_count)}"
@@ -35,27 +60,27 @@ class Timeline:
             result.raise_for_status()
             return result.json()
         except HTTPError as http_err:
-            raise Exception(f"[{result.status_code}] Failed to get post detail : {http_err}") from http_err
+            self._handle_http_error(result, "Failed to get post detail", http_err)
 
-    def like_post(self, post_id):
+    def like_post(self, post_id: str) -> bool:
         url = f"https://api.studyplus.jp/2/timeline_events/{post_id}/likes/like"
         try:
             result = requests.post(url, headers=self.headers)
             result.raise_for_status()
             return True
         except HTTPError as http_err:
-            raise Exception(f"[{result.status_code}] Failed to like post : {http_err}") from http_err
+            self._handle_http_error(result, "Failed to like post", http_err)
 
-    def unlike_post(self, post_id):
+    def unlike_post(self, post_id: str) -> bool:
         url = f"https://api.studyplus.jp/2/timeline_events/{post_id}/likes/withdraw"
         try:
             result = requests.post(url, headers=self.headers)
             result.raise_for_status()
             return True
         except HTTPError as http_err:
-            raise Exception(f"[{result.status_code}] Failed to unlike post : {http_err}") from http_err
+            self._handle_http_error(result, "Failed to unlike post", http_err)
 
-    def send_comment(self, post_id, text):
+    def send_comment(self, post_id: str, text: str) -> Dict[str, Any]:
         param = {"post_token": self.create_token(36), "comment": text}
         url = f"https://api.studyplus.jp/2/timeline_events/{post_id}/comments"
         try:
@@ -63,18 +88,24 @@ class Timeline:
             result.raise_for_status()
             return result.json()
         except HTTPError as http_err:
-            raise Exception(f"[{result.status_code}] Failed to send comment on post : {http_err}") from http_err
+            self._handle_http_error(result, "Failed to send comment on post", http_err)
 
-    def unsend_comment(self, post_id, comment_id):
+    def unsend_comment(self, post_id: str, comment_id: str) -> bool:
         url = f"https://api.studyplus.jp/2/timeline_events/{post_id}/comments/{comment_id}"
         try:
             result = requests.delete(url, headers=self.headers)
             result.raise_for_status()
             return True
         except HTTPError as http_err:
-            raise Exception(f"[{result.status_code}] Failed to unsend comment on post : {http_err}") from http_err
+            self._handle_http_error(result, "Failed to unsend comment on post", http_err)
 
-    def post_study_record(self, material_code, duration, comment, record_datetime) -> json:
+    def post_study_record(
+        self,
+        material_code: Optional[str] = None,
+        duration: int = 0,
+        comment: str = "",
+        record_datetime: Optional[str] = None
+    ) -> Dict[str, Any]:
         if record_datetime is None:
             record_datetime = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
         data = {
@@ -92,18 +123,18 @@ class Timeline:
             result.raise_for_status()
             return result.json()
         except HTTPError as http_err:
-            raise Exception(f"[{result.status_code}] Failed to post study record : {http_err}") from http_err
+            self._handle_http_error(result, "Failed to post study record", http_err)
 
-    def delete_study_record(self, record_number):
+    def delete_study_record(self, record_number: int) -> Dict[str, Any]:
         url = f"https://api.studyplus.jp/2/study_records/{str(record_number)}"
         try:
             result = requests.delete(url, headers=self.headers)
             result.raise_for_status()
             return result.json()
         except HTTPError as http_err:
-            raise Exception(f"[{result.status_code}] Failed to delete study record : {http_err}") from http_err
+            self._handle_http_error(result, "Failed to delete study record", http_err)
 
-    def get_followee_timeline(self, until=None):
+    def get_followee_timeline(self, until: Optional[str] = None) -> Dict[str, Any]:
         if until is not None:
             url = f"https://api.studyplus.jp/2/timeline_feeds/followee?until={until}"
         else:
@@ -113,9 +144,9 @@ class Timeline:
             result.raise_for_status()
             return result.json()
         except HTTPError as http_err:
-            raise Exception(f"[{result.status_code}] Failed to get followee timeline : {http_err}") from http_err
+            self._handle_http_error(result, "Failed to get followee timeline", http_err)
 
-    def get_user_timeline(self, target_id, until=None):
+    def get_user_timeline(self, target_id: str, until: Optional[str] = None) -> Dict[str, Any]:
         if until is not None:
             url = f"https://api.studyplus.jp/2/timeline_feeds/user/{target_id}?until={until}"
         else:
@@ -125,9 +156,9 @@ class Timeline:
             result.raise_for_status()
             return result.json()
         except HTTPError as http_err:
-            raise Exception(f"[{result.status_code}] Failed to get user timeline : {http_err}") from http_err
+            self._handle_http_error(result, "Failed to get user timeline", http_err)
 
-    def get_goal_timeline(self, target_id, until=None):
+    def get_goal_timeline(self, target_id: str, until: Optional[str] = None) -> Dict[str, Any]:
         if until is not None:
             url = f"https://api.studyplus.jp/2/timeline_feeds/study_goal/{target_id}?until={until}"
         else:
@@ -137,9 +168,9 @@ class Timeline:
             result.raise_for_status()
             return result.json()
         except HTTPError as http_err:
-            raise Exception(f"[{result.status_code}] Failed to get goal timeline : {http_err}") from http_err
+            self._handle_http_error(result, "Failed to get goal timeline", http_err)
 
-    def get_achievement_timeline(self, target_goal, until=None):
+    def get_achievement_timeline(self, target_goal: Optional[str] = None, until: Optional[str] = None) -> Dict[str, Any]:
         if target_goal is None:
             if until is not None:
                 url = f"https://api.studyplus.jp/2/study_achievements/feeds?until={until}"
@@ -147,26 +178,24 @@ class Timeline:
                 url = f"https://api.studyplus.jp/2/study_achievements/feeds"
         else:
             if until is not None:
-                url = f"https://api.studyplus.jp/2/study_achievements/feeds/study_goal/{
-                    target_goal}?until={until}"
+                url = f"https://api.studyplus.jp/2/study_achievements/feeds/study_goal/{target_goal}?until={until}"
             else:
-                url = f"https://api.studyplus.jp/2/study_achievements/feeds/study_goal/{
-                    target_goal}"
+                url = f"https://api.studyplus.jp/2/study_achievements/feeds/study_goal/{target_goal}"
         try:
             result = requests.get(url, headers=self.headers)
             result.raise_for_status()
             return result.json()
         except HTTPError as http_err:
-            raise Exception(f"[{result.status_code}] Failed to get achievement timeline : {http_err}") from http_err
+            self._handle_http_error(result, "Failed to get achievement timeline", http_err)
 
-    def get_followee_timelines(self, limit):
+    def get_followee_timelines(self, limit: int = 3) -> List[Dict[str, Any]]:
         results = []
         until = None
         for _ in range(limit):
             if until is not None:
-                result = self.get_user_timeline(until)
+                result = self.get_followee_timeline(until)
             else:
-                result = self.get_user_timeline()
+                result = self.get_followee_timeline()
             for event in result["feeds"]:
                 results.append(event)
             if "next" not in result:
@@ -174,7 +203,7 @@ class Timeline:
             until = result["next"]
         return results
 
-    def get_user_timelines(self, target_id, limit):
+    def get_user_timelines(self, target_id: str, limit: int = 3) -> List[Dict[str, Any]]:
         results = []
         until = None
         for _ in range(limit):
@@ -189,7 +218,7 @@ class Timeline:
             until = result["next"]
         return results
 
-    def get_goal_timelines(self, target_id, limit):
+    def get_goal_timelines(self, target_id: str, limit: int = 3) -> List[Dict[str, Any]]:
         results = []
         until = None
         for _ in range(limit):
@@ -204,7 +233,7 @@ class Timeline:
             until = result["next"]
         return results
 
-    def get_achievement_timelines(self, target_id, limit):
+    def get_achievement_timelines(self, target_id: Optional[str] = None, limit: int = 3) -> List[Dict[str, Any]]:
         results = []
         until = None
         for _ in range(limit):
