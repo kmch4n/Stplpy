@@ -1,24 +1,24 @@
 # Contributing to Stplpy
 
-Stplpyへの貢献に興味を持っていただきありがとうございます！このドキュメントでは、プロジェクトへの貢献方法について説明します。
+Thank you for your interest in contributing to Stplpy! This document explains how to contribute to the project.
 
-## 開発環境のセットアップ
+## Development Environment Setup
 
-### 必要な環境
+### Requirements
 
-- Python 3.12以上
+- Python 3.12 or higher
 - Git
 
-### セットアップ手順
+### Setup Steps
 
-1. リポジトリをフォーク・クローン
+1. Fork and clone the repository
 
 ```bash
 git clone https://github.com/yourusername/Stplpy.git
 cd Stplpy
 ```
 
-2. 仮想環境を作成
+2. Create a virtual environment
 
 ```bash
 python -m venv venv
@@ -27,17 +27,17 @@ source venv/bin/activate  # Linux/Mac
 venv\Scripts\activate  # Windows
 ```
 
-3. 開発用依存関係をインストール
+3. Install development dependencies
 
 ```bash
 pip install -e ".[dev]"
 ```
 
-## 開発ワークフロー
+## Development Workflow
 
-### 1. ブランチの作成
+### 1. Creating a Branch
 
-新機能やバグ修正のために、新しいブランチを作成します：
+Create a new branch for your feature or bug fix:
 
 ```bash
 git checkout -b feature/your-feature-name
@@ -45,58 +45,58 @@ git checkout -b feature/your-feature-name
 git checkout -b fix/bug-description
 ```
 
-### 2. コードの変更
+### 2. Making Changes
 
-- コードを変更する前に、既存のコードスタイルを確認してください
-- 型ヒントを必ず追加してください
-- docstringを追加して、関数やクラスの動作を文書化してください
+- Review the existing code style before making changes
+- Always add type hints
+- Add docstrings to document function and class behavior
 
-### 3. コードスタイル
+### 3. Code Style
 
-このプロジェクトでは以下のツールを使用しています：
+This project uses the following tools:
 
-#### Black (コードフォーマッター)
+#### Black (Code Formatter)
 
 ```bash
 black stplpy tests
 ```
 
-#### Flake8 (リンター)
+#### Flake8 (Linter)
 
 ```bash
 flake8 stplpy tests
 ```
 
-#### Mypy (型チェック)
+#### Mypy (Type Checker)
 
 ```bash
 mypy stplpy
 ```
 
-### 4. テストの実行
+### 4. Running Tests
 
-変更後、必ずテストを実行してください：
+Always run tests after making changes:
 
 ```bash
-# すべてのテストを実行
+# Run all tests
 pytest
 
-# カバレッジレポート付きで実行
+# Run with coverage report
 pytest --cov=stplpy --cov-report=html
 
-# 特定のテストファイルを実行
+# Run specific test file
 pytest tests/test_user.py
 ```
 
-### 5. 新しいテストの追加
+### 5. Adding New Tests
 
-新機能を追加する場合は、必ずテストも追加してください：
+When adding new features, always include tests:
 
-- `tests/`ディレクトリに対応するテストファイルを作成
-- 各関数に対して少なくとも1つのテストを作成
-- エッジケースやエラーケースもテスト
+- Create corresponding test files in the `tests/` directory
+- Create at least one test for each function
+- Test edge cases and error cases
 
-例：
+Example:
 
 ```python
 def test_new_feature():
@@ -111,144 +111,144 @@ def test_new_feature():
     assert result == expected
 ```
 
-## コミットメッセージ
+## Commit Messages
 
-コミットメッセージは以下の形式に従ってください：
+Follow this format for commit messages:
 
 ```
-[絵文字] 短い説明
+[emoji] Short description
 
-詳細な説明（必要に応じて）
+Detailed description (if necessary)
 
-- 変更点1
-- 変更点2
+- Change 1
+- Change 2
 ```
 
-### 使用する絵文字：
+### Emoji Usage:
 
-- 🐛 `:bug:` - バグ修正
-- ✨ `:sparkles:` - 新機能
-- 📝 `:memo:` - ドキュメント
-- 🎨 `:art:` - コードスタイル/構造の改善
-- ♻️ `:recycle:` - リファクタリング
-- ✅ `:white_check_mark:` - テストの追加/更新
-- 🔧 `:wrench:` - 設定ファイルの変更
-- ⬆️ `:arrow_up:` - 依存関係の更新
-- 🔒 `:lock:` - セキュリティ修正
+- 🐛 `:bug:` - Bug fix
+- ✨ `:sparkles:` - New feature
+- 📝 `:memo:` - Documentation
+- 🎨 `:art:` - Code style/structure improvements
+- ♻️ `:recycle:` - Refactoring
+- ✅ `:white_check_mark:` - Adding/updating tests
+- 🔧 `:wrench:` - Configuration file changes
+- ⬆️ `:arrow_up:` - Dependency updates
+- 🔒 `:lock:` - Security fixes
 
-例：
+Example:
 
 ```
 [✨] Add user statistics feature
 
-ユーザーの学習統計を取得する新機能を追加
+Added new feature to retrieve user study statistics
 
-- get_user_statistics()メソッドを実装
-- 総学習時間と記録数を計算
-- テストケースを追加
+- Implemented get_user_statistics() method
+- Calculate total study time and record count
+- Added test cases
 ```
 
-## プルリクエスト
+## Pull Requests
 
-### PRを作成する前に
+### Before Creating a PR
 
-- [ ] すべてのテストがパスすることを確認
-- [ ] コードスタイルチェックがパスすることを確認
-- [ ] 新機能にはテストが含まれている
-- [ ] ドキュメントを更新（必要な場合）
+- [ ] Ensure all tests pass
+- [ ] Ensure code style checks pass
+- [ ] New features include tests
+- [ ] Update documentation (if necessary)
 
-### PRの説明
+### PR Description
 
-PRには以下を含めてください：
+Include the following in your PR:
 
-1. **変更内容の要約**
-2. **変更の理由**
-3. **関連するIssue番号**（ある場合）
-4. **スクリーンショットやログ**（該当する場合）
+1. **Summary of changes**
+2. **Reason for changes**
+3. **Related issue number** (if applicable)
+4. **Screenshots or logs** (if applicable)
 
-### PRテンプレート
+### PR Template
 
 ```markdown
-## 変更内容
+## Changes
 
-<!-- 何を変更したか簡潔に説明 -->
+<!-- Briefly explain what was changed -->
 
-## 変更の理由
+## Reason for Changes
 
-<!-- なぜこの変更が必要か -->
+<!-- Why this change is necessary -->
 
-## 関連Issue
+## Related Issue
 
 Closes #issue_number
 
-## チェックリスト
+## Checklist
 
-- [ ] テストを追加/更新した
-- [ ] ドキュメントを更新した
-- [ ] コードスタイルチェックに合格
-- [ ] すべてのテストに合格
+- [ ] Added/updated tests
+- [ ] Updated documentation
+- [ ] Code style checks passed
+- [ ] All tests passed
 ```
 
-## Issue報告
+## Issue Reporting
 
-バグを発見した場合や新機能を提案する場合は、Issueを作成してください。
+If you find a bug or want to propose a new feature, please create an issue.
 
-### バグ報告
+### Bug Reports
 
 ```markdown
-## バグの説明
+## Bug Description
 
-<!-- バグの明確な説明 -->
+<!-- Clear description of the bug -->
 
-## 再現手順
+## Steps to Reproduce
 
 1.
 2.
 3.
 
-## 期待される動作
+## Expected Behavior
 
-<!-- 何が起こるべきか -->
+<!-- What should happen -->
 
-## 実際の動作
+## Actual Behavior
 
-<!-- 実際に何が起こったか -->
+<!-- What actually happened -->
 
-## 環境
+## Environment
 
 - OS:
 - Python version:
 - Stplpy version:
 ```
 
-### 機能要望
+### Feature Requests
 
 ```markdown
-## 機能の説明
+## Feature Description
 
-<!-- 追加したい機能の説明 -->
+<!-- Description of the feature you want to add -->
 
-## ユースケース
+## Use Case
 
-<!-- この機能が必要な理由と使用例 -->
+<!-- Why this feature is needed and usage examples -->
 
-## 実装案
+## Implementation Ideas
 
-<!-- 実装のアイデア（あれば） -->
+<!-- Implementation ideas (if any) -->
 ```
 
-## コードレビュー
+## Code Review
 
-すべてのPRはレビューされます。レビュアーからのフィードバックに建設的に対応してください。
+All PRs will be reviewed. Please respond constructively to reviewer feedback.
 
-## 質問
+## Questions
 
-質問がある場合は、Issueを作成するか、既存のディスカッションに参加してください。
+If you have questions, please create an issue or join existing discussions.
 
-## ライセンス
+## License
 
-貢献されたコードは、プロジェクトのライセンス（MIT）の下で公開されます。
+Contributed code will be published under the project's license (MIT).
 
 ---
 
-貢献いただきありがとうございます！ 🎉
+Thank you for your contributions! 🎉

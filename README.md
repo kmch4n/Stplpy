@@ -5,25 +5,25 @@
 
 ## About
 
-StplpyはStudyPlusをPythonで操作するためのライブラリです。
-このコードは学習目的で作成されたものであり、bot運用などを推奨するものではありません。
+Stplpy is a Python library for programmatically interacting with StudyPlus, a Japanese social study platform.
+This code is created for educational purposes and is not intended to encourage bot operations.
 
-### 主な機能
+### Key Features
 
-- ユーザー情報の取得・管理
-- フォロー・フォロワー操作
-- タイムライン取得（複数種類対応）
-- 学習記録の投稿・削除
-- 投稿へのいいね・コメント機能
-- プロフィール画像の更新
-- **型ヒント完備**
-- **カスタム例外クラス**
-- **ユーティリティ関数**
-- **テストスイート完備**
+- User information retrieval and management
+- Follow/unfollow operations
+- Timeline retrieval (multiple types supported)
+- Study record posting and deletion
+- Like and comment on posts
+- Profile picture updates
+- **Complete type hints**
+- **Custom exception classes**
+- **Utility functions**
+- **Comprehensive test suite**
 
 ## Installation
 
-### pipを使用したインストール（開発版）
+### Installation using pip (development version)
 
 ```bash
 git clone https://github.com/kmch4n/Stplpy.git
@@ -31,29 +31,29 @@ cd Stplpy
 pip install -e .
 ```
 
-### 開発用インストール
+### Development Installation
 
-テストやコード品質ツールも含めてインストール：
+Install with testing and code quality tools:
 
 ```bash
 pip install -e ".[dev]"
 ```
 
-## 実行環境
+## Requirements
 
-このプロジェクトはPython 3.12以上で動作することを前提としています。
+This project requires Python 3.12 or higher.
 
 ## Setup
 
-### 1. tokenの取得
+### 1. Obtaining the Token
 
-Charles等を使用してStudyPlusを開いた状態で適当に動かすと、Request HeaderのAuthorizationから見つけられます。
-`OAuth xxxxxxxx`の`xxxxxx`部分のみを抽出してください。
-**Web版StudyPlusのトークンとは異なることに注意してください。**
+Use Charles Proxy or similar tools to intercept StudyPlus mobile app traffic. You can find the token in the Request Header's Authorization field.
+Extract only the `xxxxxx` part from `OAuth xxxxxxxx`.
+**Note: This is different from the web version StudyPlus token.**
 
-### 2. `.env`の作成
+### 2. Creating `.env`
 
-プロジェクトルートに`.env`ファイルを作成：
+Create a `.env` file in the project root:
 
 ```env
 TOKEN="xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
@@ -61,33 +61,33 @@ TOKEN="xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 ## Usage
 
-### 基本的な使用方法
+### Basic Usage
 
 ```python
 from stplpy import StudyPlus
 from dotenv import load_dotenv
 import os
 
-# 環境変数の読み込み
+# Load environment variables
 load_dotenv(".env")
 client = StudyPlus(os.environ["TOKEN"])
 
-# ユーザー情報の取得
+# Get user information
 myself = client.get_myself()
 print(f"Username: {myself['username']}")
 
-# タイムラインの取得
+# Get timeline
 timeline = client.get_followee_timeline()
 print(f"Posts: {len(timeline['feeds'])}")
 
-# 学習記録の投稿
+# Post study record
 record = client.post_study_record(
-    duration=3600,  # 秒単位
-    comment="Pythonの学習をしました！"
+    duration=3600,  # in seconds
+    comment="Studied Python today!"
 )
 ```
 
-### 例外処理
+### Exception Handling
 
 ```python
 from stplpy import StudyPlus
@@ -103,16 +103,16 @@ client = StudyPlus(token)
 try:
     user = client.get_user("username")
 except ResourceNotFoundError:
-    print("ユーザーが見つかりません")
+    print("User not found")
 except AuthenticationError:
-    print("認証に失敗しました")
+    print("Authentication failed")
 except RateLimitError:
-    print("レート制限に達しました")
+    print("Rate limit reached")
 except APIError as e:
-    print(f"API エラー: {e.status_code}")
+    print(f"API error: {e.status_code}")
 ```
 
-### ユーティリティ関数
+### Utility Functions
 
 ```python
 from stplpy.utils import (
@@ -121,49 +121,49 @@ from stplpy.utils import (
     group_by_date
 )
 
-# 学習時間のフォーマット
+# Format study duration
 duration = format_study_duration(7265)  # "2h 1m 5s"
 
-# 総学習時間の計算
+# Calculate total study time
 records = [{"duration": 3600}, {"duration": 1800}]
 total = calculate_total_study_time(records)  # 5400
 
-# 日付でグループ化
+# Group by date
 grouped = group_by_date(records, "record_datetime")
 ```
 
 ## Examples
 
-詳しい使い方は、[example.py](https://github.com/kmch4n/Stplpy/blob/main/example.py)を参考にしてください。
+For detailed usage examples, see [example.py](https://github.com/kmch4n/Stplpy/blob/main/example.py).
 
 ## Development
 
-### テストの実行
+### Running Tests
 
 ```bash
-# すべてのテストを実行
+# Run all tests
 pytest
 
-# カバレッジレポート付きで実行
+# Run with coverage report
 pytest --cov=stplpy --cov-report=html
 ```
 
-### コード品質チェック
+### Code Quality Checks
 
 ```bash
-# コードフォーマット
+# Code formatting
 black stplpy tests
 
-# リント
+# Linting
 flake8 stplpy tests
 
-# 型チェック
+# Type checking
 mypy stplpy
 ```
 
 ## Contributing
 
-貢献を歓迎します！詳細は[CONTRIBUTING.md](CONTRIBUTING.md)をご覧ください。
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ## License
 
@@ -173,15 +173,15 @@ MIT License
 
 ### v0.2.0 (Latest)
 
-- ✨ カスタム例外クラスの追加
-- ✨ 完全な型ヒントサポート
-- ✨ ユーティリティ関数の追加
-- ✅ pytest テストスイートの追加
-- 📦 pyproject.toml によるパッケージング
-- 🐛 構文エラーとバグの修正
-- 📝 ドキュメントの改善
+- ✨ Added custom exception classes
+- ✨ Complete type hint support
+- ✨ Added utility functions
+- ✅ Added pytest test suite
+- 📦 Packaging with pyproject.toml
+- 🐛 Fixed syntax errors and bugs
+- 📝 Improved documentation
 
 ### v0.1.0
 
-- 初期リリース
-- 基本的なAPI機能
+- Initial release
+- Basic API functionality
