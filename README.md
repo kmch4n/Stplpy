@@ -70,18 +70,18 @@ import os
 
 # Load environment variables
 load_dotenv(".env")
-client = StudyPlus(os.environ["TOKEN"])
+cl = StudyPlus(os.environ["TOKEN"])
 
 # Get user information
-myself = client.get_myself()
+myself = cl.get_myself()
 print(f"Username: {myself['username']}")
 
 # Get timeline
-timeline = client.get_followee_timeline()
+timeline = cl.get_followee_timeline()
 print(f"Posts: {len(timeline['feeds'])}")
 
 # Post study record
-record = client.post_study_record(
+record = cl.post_study_record(
     duration=3600,  # in seconds
     comment="Studied Python today!"
 )
@@ -98,10 +98,10 @@ from stplpy.exceptions import (
     APIError
 )
 
-client = StudyPlus(token)
+cl = StudyPlus(token)
 
 try:
-    user = client.get_user("username")
+    user = cl.get_user("username")
 except ResourceNotFoundError:
     print("User not found")
 except AuthenticationError:
