@@ -1,4 +1,7 @@
+__pycache__/
+.vscode/
+.claude/
+CLAUDE.md
 .env
 *.pyc
-autolike.py
-manage.py
+*_.py
